@@ -1,55 +1,68 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import './style.css';
+import React, { Component } from 'react';
+import Countries from 'countries-api';
+import './App.css';
 
-class App extends React.Component {
-  state = {
-    isLoading: true,
-    country: [],
-    error: null
-  };
+import Pagination from './components/Pagination';
+import CountryCard from './components/CountryCard';
 
-  fetchCountries() {
-    fetch(`https://restcountries.eu/rest/v2/all`)
-        .then(response => response.json())
-        .then(data =>
-            this.setState({
-              countries: data,
-              isLoading: false,
-            })
-        )
-        .catch(error => this.setState({ error, isLoading: false }));
-  }
+class App extends Component {
 
-  componentDidMount() {
-    this.fetchCountries();
-  }
-  render() {
-    const { isLoading, countries, error } = this.state;
-    return (
-        <React.Fragment>
-          <h1 className="card-header text-center">Перелік країн з прапорами</h1>
-          {error ? <p>{error.message}</p> : null}
-          {!isLoading ? (
-              countries.map(country => {
-                const { name, capital, flag } = country;
-                return (
-                    <div key={name}>
-                      <h1 className="text">{name}</h1>
-                      <h1 className="capital">Столиця: {capital}</h1>
-                      <div>
-                        <img src={flag} alt="country" className="flag"/>
-                      </div>
-                      <hr />
+    state = { allCountries: [], currentCountries: [], currentPage: null, totalPages: null }
+
+    componentDidMount() {
+        const { data: allCountries = [] } = Countries.findAll();
+        this.setState({ allCountries });
+    }
+
+    onPageChanged = data => {
+        const { allCountries } = this.state;
+        const { currentPage, totalPages, pageLimit } = data;
+
+        const offset = (currentPage - 1) * pageLimit;
+        const currentCountries = allCountries.slice(offset, offset + pageLimit);
+
+        this.setState({ currentPage, currentCountries, totalPages });
+    };
+
+    render() {
+        const { allCountries, currentCountries, currentPage, totalPages } = this.state;
+        const totalCountries = allCountries.length;
+
+        if (totalCountries === 0) return null;
+
+        const headerClass = ['text-dark py-2 pr-4 m-0', currentPage ? 'border-gray border-right' : ''].join(' ').trim();
+
+        return (
+            <div className="container mb-5">
+                <div className="row d-flex flex-row py-5">
+
+                    <div className="w-100 px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
+                        <div className="d-flex flex-row align-items-center">
+
+                            <h2 className={headerClass}>
+                                <strong className="text-secondary">{totalCountries}</strong> Countries
+                            </h2>
+
+                            { currentPage && (
+                                <span className="current-page d-inline-block h-100 pl-4 text-secondary">
+                  Page <span className="font-weight-bold">{ currentPage }</span> / <span className="font-weight-bold">{ totalPages }</span>
+                </span>
+                            ) }
+
+                        </div>
+
+                        <div className="d-flex flex-row py-4 align-items-center">
+                            <Pagination totalRecords={totalCountries} pageLimit={18} pageNeighbours={1} onPageChanged={this.onPageChanged} />
+                        </div>
                     </div>
-                );
-              })
-          ) : (
-              <h3>Loading...</h3>
-          )}
-        </React.Fragment>
-    );
-  }
+
+                    { currentCountries.map(country => <CountryCard key={country.cca3} country={country} />) }
+
+                </div>
+            </div>
+        );
+    }
+
 }
 
 export default App;
