@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
+import blankImg from "./blank.gif";
+import "./style.css";
+import "./flags.min.css";
+import countriesList from "./countries.json";
 
 import {
   Button,
@@ -13,13 +17,6 @@ import {
   CardTitle,
   CardText
 } from "mdbreact";
-
-import blankImg from "./blank.gif";
-
-import "./style.css";
-import "./flags.min.css";
-
-import countriesList from "./countries.json";
 
 class App extends Component {
   state = {
