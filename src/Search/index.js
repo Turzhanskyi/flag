@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "bootstrap-css-only/css/bootstrap.min.css";
+import "mdbreact/dist/css/mdb.css";
+
 import {
   Button,
   Input,
@@ -66,21 +70,9 @@ class App extends Component {
         <main style={{ marginTop: "4rem" }}>
           <div className="container">
             <div className="row">
-              <div className="col-12">
-                <center>
-                  <h3>
-                    <a
-                      href="https://www.youtube.com/watch?v=RM_nXOyHwN0"
-                      target="_blank"
-                    >
-                      Watch youtube demo here
-                    </a>
-                  </h3>
-                </center>
-              </div>
               <div className="col">
                 <Input
-                  label="Search Country"
+                  label="Пошук країни"
                   icon="search"
                   onChange={this.onchange}
                 />
